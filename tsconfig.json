@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+      "baseUrl": ".",
+      "paths": { "*": ["types/*"] },
+        "outDir": "lib",
+        "module": "commonjs",
+        "lib": ["es2018"],
+        "target": "es2016",
+        "declaration": true,
+        "noImplicitAny": false,
+        "experimentalDecorators": true,
+        "sourceMap": false
+    },
+    "include": [
+      "**/*.ts"
+    ]
+}
