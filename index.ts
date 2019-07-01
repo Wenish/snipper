@@ -7,7 +7,7 @@ import { monitor } from '@colyseus/monitor';
 
 // Import demo room handlers
 
-import { StateHandlerRoom } from "./rooms/02-state-handler";
+import { StateHandlerRoom } from "./rooms/snipper";
 
 
 const port = Number(process.env.PORT || 2567);

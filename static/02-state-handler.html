@@ -69,7 +69,7 @@
             dom.style.top = change.value.y + "px";
             dom.style.background = colors[Math.floor(Math.random() * colors.length)];
             dom.innerHTML = "Player " + change.path.id;
-            dom.dataset.player=change.path.id;
+            dom.dataset.player = change.path.id;
             players[change.path.id] = dom;
             document.body.appendChild(dom);
 
@@ -88,44 +88,58 @@
     });
 
 
-    room.listen("bullet/:id", function (change) {
-
-        let playerId=change.value.player;
-        let playerTop=players[playerId].style.top;
-        let playerLeft=players[playerId].style.left;
-
-
+    room.listen("bullets/:id", function (change) {
+        //console.log("change.value.player ",change);
         if (change.operation === "add") {
+            let playerId = change.value.player;
+            let playerTop = players[playerId].style.top;
+            let playerLeft = players[playerId].style.left;
             document.querySelector("#userdeck").innerHTML = "";
             var img = document.createElement('img');
             img.src = "/bullet.png";
             img.height = 50;
             img.width = 50;
-            img.className = "bullet";
+            img.className = "bullets";
             img.style.left = playerLeft;
             img.style.top = playerTop;
-            img.style.position ="absolute" ;
-            bullets[change.path.id] = img;
+            img.style.position = "absolute";
+            bullets[change.path.id] = {img:img};
             document.body.appendChild(img);
 
-        } else if (change.operation === "remove") {
-            document.body.removeChild(bullets[change.path.id]);
-            delete bullets[change.path.id];
         }
+        // else if (change.operation === "remove") {
+        //     console.log("id :: ",change.path.id);
+        //     console.log("bullets :: ",bullets);
+        //     document.body.removeChild(bullets[change.path.id].img);
+        //     delete bullets[change.path.id];
+        // }
+
     });
 
-    room.listen("bullet/:id/:axis", function (change) {
-        console.log(change)
+    room.listen("bullets/:id/:axis", function (change) {
+
+
+        if (change.operation === "replace") {
+            if (change.path.axis === 'x') {
+              console.log("change in x ", change.value);
+                bullets[change.path.id].img.style.left=change.value;
+
+            } else {
+                console.log("change in y ", change.value);
+                bullets[change.path.id].img.style.top = change.value;
+            }
+        }
+        console.log(bullets[change.path.id].img);
     });
 
 
-    document.onmousedown = function(event){
-        var x =  event.clientX - 8;
-        var y =  event.clientY - 8;
+    document.onmousedown = function (event) {
+        var x = event.clientX;
+        var y = event.clientY;
         var angle = Math.atan2(y, x) / Math.PI * 180;
-        console.log("x :: ",x);
-        console.log("y :: ",y);
-        console.log("angle :: ",angle);
+        // console.log("x :: ",x);
+        // console.log("y :: ",y);
+        // console.log("angle :: ",angle);
         room.send({x, y, angle, action: "FIRE"})
     }
 
