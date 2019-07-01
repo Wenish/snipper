@@ -1,5 +1,6 @@
 import {Room, EntityMap, Client, nosync, generateId} from "colyseus";
 //import { ACTIONS } from '../constants/constants';
+var Victor = require('victor');
 
 
 export class State {
@@ -43,6 +44,33 @@ export class State {
         // spdX = Math.cos(param.angle/180*Math.PI) * 10;
         // spdY = Math.sin(param.angle/180*Math.PI) * 10;
     }
+
+    static distance(a, b) {
+        return Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
+    }
+
+    update(){
+
+
+        for (let bullet in this.bullet ){
+
+            let self=this.bullet[bullet];
+            console.log(bullet);
+
+            const dst = State.distance(self, this.players[self.player]);
+            console.log("dst :: ",dst);
+            let speed = (dst < 20) ? 0 : Math.min(dst / 15, 4);
+            console.log("speed :: ",speed);
+
+            self.x-= (Math.cos(self.angle));
+            self.y-= (Math.cos(self.angle));
+            if (self.x > 1000 || self.y > 1000 ){
+                delete this.bullet[bullet]
+            }
+        }
+        // entity.x -= (Math.cos(entity.angle)) * entity.speed;
+        // entity.y -= (Math.sin(entity.angle)) * entity.speed;
+    }
 }
 
 export class Player {
@@ -74,14 +102,13 @@ export class StateHandlerRoom extends Room<State> {
         console.log("StateHandlerRoom created!", options);
 
         this.setState(new State());
+        //this.setSimulationInterval(() => this.state.update());
     }
-
     onJoin(client) {
+
         let i = 0;
         for (let [key, value] of Object.entries(this.spwanningIndex)) {
             if (value.available) {
-                console.log("Available");
-                console.log(`Building ${key} is available at index ${i}`);
                 this.state.createPlayer(client.sessionId, value.index, key);
                 this.spwanningIndex[key].available = false;
                 break
@@ -99,7 +126,7 @@ export class StateHandlerRoom extends Room<State> {
     onMessage(client, data) {
         console.log("StateHandlerRoom received message from", client.sessionId, ":", data);
         if (data.action==="FIRE") {
-                this.state.fireBullet(client.sessionId,data)
+            this.state.fireBullet(client.sessionId,data);
         } else if (data.action==="MOVE") {
             this.state.movePlayer(client.sessionId, data);
         }

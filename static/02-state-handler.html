@@ -47,6 +47,7 @@
 
 <!--<button onclick="fire()">Fire</button>-->
 
+<script src="./victor.js"></script>
 
 <script>
     var host = window.document.location.host.replace(/:.*/, '');
@@ -118,39 +119,6 @@
     });
 
 
-    window.addEventListener("keydown", function (e) {
-        console.log(e.which);
-        if (e.which === 38) {
-            up();
-
-        } else if (e.which === 39) {
-            right();
-
-        } else if (e.which === 40) {
-            down();
-
-        } else if (e.which === 37) {
-            left();
-        }
-    });
-
-    function up() {
-        room.send({y: -1});
-    }
-
-    function right() {
-        room.send({x: 1});
-    }
-
-    function down() {
-        room.send({y: 1})
-    }
-
-    function left() {
-        room.send({x: -1})
-    }
-
-
     document.onmousedown = function(event){
         var x =  event.clientX - 8;
         var y =  event.clientY - 8;
@@ -159,7 +127,7 @@
         console.log("y :: ",y);
         console.log("angle :: ",angle);
         room.send({x, y, angle, action: "FIRE"})
-    };
+    }
 
 </script>
 </body>
